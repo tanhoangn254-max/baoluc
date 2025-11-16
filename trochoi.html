@@ -1,0 +1,230 @@
+fetch('http://localhost:3000/api/contact', {
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trò chơi - Nói không với bạo lực học đường</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-color: #c0392b;
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+    }
+    header h1 {
+      color: white !important;
+    }
+    nav {
+      background-color: #fff;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: #c0392b;
+      font-weight: bold;
+    }
+    .container {
+      background-color: #fff;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      max-width: 800px;
+      text-align: center;
+    }
+    h1 {
+      color: #c0392b;
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+    .question {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #34495e;
+    }
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .answers button {
+      background-color: #c0392b;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.3s ease;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 10px;
+    }
+    .answers button:hover {
+      background-color: #a93226;
+      transform: scale(1.05);
+    }
+    #result {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .next-btn {
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .next-btn:hover {
+      background-color: #1e8449;
+    }
+    .feedback-btn {
+      background-color: #c0392b;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+    .feedback-btn:hover {
+      background-color: #a93226;
+    }
+    footer {
+      background-color: #c0392b;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🎓 Chuyên đề giáo dục</h1>
+    <p>Trò chơi tương tác giáo dục học đường an toàn và thân thiện</p>
+  </header>
+
+  <nav>
+    <a href="index.html">Trang chủ</a>
+    <a href="gt.html">Thông tin</a>
+    <a href="trochoi.html">Trò chơi</a>
+    <a href="gopy.html">Góp ý</a>
+  </nav>
+
+  <div class="container">
+    <h1>🎮 Hành động vì học đường an toàn</h1>
+    <div class="question" id="question"></div>
+    <div class="answers" id="answers"></div>
+    <div id="result"></div>
+    <button class="next-btn" onclick="nextQuestion()">👉 Câu hỏi tiếp theo</button>
+  </div>
+
+  <footer>
+    &copy; 2025 Trường Tân Mỹ Chánh. Chung tay vì học đường an toàn.
+  </footer>
+
+  <script>
+    const questions = [
+      {
+        question: "Bạo lực học đường gây ảnh hưởng gì?",
+        options: ["Chỉ gây đau thể chất", "Làm học sinh vui vẻ", "Ảnh hưởng thể chất và tinh thần", "Không ảnh hưởng gì"],
+        answer: 2
+      },
+      {
+        question: "Ai có vai trò ngăn chặn bạo lực học đường?",
+        options: ["Chỉ giáo viên", "Chỉ phụ huynh", "Chỉ học sinh", "Tất cả mọi người"],
+        answer: 3
+      },
+      {
+        question: "Hành động nào giúp xây dựng môi trường học đường thân thiện?",
+        options: ["Chia sẻ, giúp đỡ bạn bè", "Trêu chọc bạn", "Đánh nhau", "Phớt lờ người khác"],
+        answer: 0
+      },
+      {
+        question: "Khi bị bắt nạt, học sinh nên làm gì?",
+        options: ["Im lặng", "Báo với người lớn", "Bắt nạt lại", "Bỏ học"],
+        answer: 1
+      },
+      {
+        question: "Bạo lực học đường có thể xảy ra ở đâu?",
+        options: ["Chỉ trong lớp học", "Chỉ ngoài sân trường", "Trên mạng xã hội và thực tế", "Không xảy ra"],
+        answer: 2
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const q = questions[current];
+      document.getElementById("question").innerText = `Câu ${current + 1}: ${q.question}`;
+      const answersDiv = document.getElementById("answers");
+      answersDiv.innerHTML = "";
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(i);
+        answersDiv.appendChild(btn);
+      });
+      document.getElementById("result").innerText = "";
+    }
+
+    function checkAnswer(selected) {
+      const correct = questions[current].answer;
+      const result = document.getElementById("result");
+      if (selected === correct) {
+        score++;
+        result.innerText = "🎉 Chính xác! Bạn thật tuyệt!";
+        result.style.color = "#27ae60";
+      } else {
+        result.innerText = "😢 Sai rồi. Hãy thử lại hoặc chuyển câu khác.";
+        result.style.color = "#c0392b";
+      }
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current < questions.length) {
+        loadQuestion();
+      } else {
+        document.querySelector(".question").innerText = `🎯 Bạn đã hoàn thành tất cả câu hỏi!`;
+        document.getElementById("answers").innerHTML = "";
+        document.getElementById("result").innerText = `🎓 Tổng điểm của bạn: ${score}/${questions.length}`;
+        document.querySelector(".next-btn").style.display = "none";
+
+        const feedback = document.createElement("div");
+        feedback.innerHTML = `
+          <h2>🎯 Cảm ơn bạn đã tham gia!</h2>
+          <p>Hãy cho tôi một ý kiến đóng góp để tôi hoàn thiện nha!</p>
+          <button class="feedback-btn" onclick="window.location.href='gopy.html'">Góp ý để hoàn thiện</button>
+        `;
+        document.querySelector(".container").appendChild(feedback);
+      }
+    }
+
+    window.onload = loadQuestion;
+  </script>
+</body>
+</html>
